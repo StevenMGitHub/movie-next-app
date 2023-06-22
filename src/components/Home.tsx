@@ -1,4 +1,4 @@
-"use client";
+"use client"; // usar del lado del cliente 
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import { BsPlayFill } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
 import dynamic from "next/dynamic";
 
-const ReactPlayer = dynamic(() => import("react-player/lazy"), { ssr: false });
+const ReactPlayer = dynamic(() => import("react-player/lazy"), { ssr: false }); /* no hay renderizado del lado del servidor, hidratacion peresoza */
 
 const Home = () => {
 
@@ -31,7 +31,7 @@ const Home = () => {
     videos: { results: [{ type: string; key: string }] };
   }
 
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // usar para metros de la busqueda 'next/navigation'.
 
   const [isLoading, setIsLoading] = useState(false);
   const [isImgLoading, setIsImgLoading] = useState(false);
@@ -43,20 +43,20 @@ const Home = () => {
     setIsLoading(true);
     setIsImgLoading(true);
 
-    let searchMovie = searchParams.get("movie");
+    let searchMovie = searchParams.get("movie"); // recuperar los parametros 'movie' de la busqueda.
 
-    if (searchMovie === null) {
+    if (searchMovie === null) { // si no hay busquedas, configurar 'avengers' como predeterminada.
       searchMovie = "avengers";
     }
 
     axios
       .get(`https://api.themoviedb.org/3/search/movie`, {
-        params: {
+        params: { // en la peticion de la API agregamos los parametros con la 'api_key' y la pelicula de la consulta.
           api_key: process.env.NEXT_PUBLIC_API_KEY,
           query: searchMovie,
         },
       })
-      .then((res) => {
+      .then((res) => { // luego con la respuesta obtenemos nuestra URL del video 
         axios
           .get(
             `https://api.themoviedb.org/3/movie/${res?.data?.results[0]?.id}?api_key=${process.env.NEXT_PUBLIC_API_KEY}&append_to_response=videos`
@@ -67,18 +67,18 @@ const Home = () => {
             console.log("Movie:", res.data);
           });
       });
-  }, [searchParams]);
+  }, [searchParams]); /* cada vez que la busqueda cambie */
 
   useEffect(() => {
     const trailerIndex = movie?.videos?.results?.findIndex(
       (element) => element.type === "Trailer"
-    );
+    ); /* obtener index de tipo trailer de la respuesta */
 
     const trailerURL = `https://www.youtube.com/watch?v=${
-      movie?.videos?.results[trailerIndex || 0]?.key
+      movie?.videos?.results[trailerIndex || 0]?.key // si esta disponible el index, sino 0
     }`;
-    setTrailer(trailerURL);
-  }, [movie]);
+    setTrailer(trailerURL); /* configurar la URL del trailer con el 'key' que se obtuvo */
+  }, [movie]); /* cada vez que la pelicula cambie */
 
   return (
     <div className="bg-secondary relative px-4 md:px-0">
@@ -88,7 +88,7 @@ const Home = () => {
         <div className="flex-col lg:flex-row flex gap-10 lg:mx-10 py-20">
           <div className="mx-auto flex-none relative">
             <Image
-              src={`https://image.tmdb.org/t/p/w500/${movie?.poster_path}`}
+              src={`https://image.tmdb.org/t/p/w500/${movie?.poster_path}`} // obtener imagen del poster de la pelicula
               width={700}
               height={700}
               className="w-[300px] object-cover"
@@ -96,7 +96,7 @@ const Home = () => {
               onLoadingComplete={() => setIsImgLoading(false)}
               priority
             />
-            {isImgLoading && <Loading />}
+            {isImgLoading && <Loading />} {/* si esta aun cargando mostraremos el componente de carga dentro de esta area */}
           </div>
 
           <div className="space-y-6">
@@ -114,7 +114,7 @@ const Home = () => {
                 />
               ))}
             </div>
-
+            {/* informacion de la pelicula */}
             <div className="flex flex-col md:flex-row gap-2 md:gap-6">
               <div>Language: {movie?.original_language?.toUpperCase()}</div>
               <div>Release: {movie?.release_date}</div>
@@ -143,7 +143,7 @@ const Home = () => {
         <div
           className={`absolute top-3 inset-x-[7%] md:inset-x-[13%] rounded overflow-hidden transition duration-1000 ${
             showPlayer ? "opacity-100 z-50" : "opacity-0 -z-10"
-          }`}
+          }`} /* si 'showPlayer' activar contenedor, sino ocultar */
         >
           <div className="flex items-center justify-between bg-black text-[#f9f9f9] p-3.5">
             <span className="font-semibold">Playing Trailer</span>
@@ -151,7 +151,7 @@ const Home = () => {
               className="cursor-pointer w-8 h-8 flex justify-center items-center rounded-lg opacity-50 hover:opacity-75 hover:bg-[#0F0F0F]"
               onClick={() => setShowPlayer(false)}
             >
-              <IoMdClose className="h-5" />
+              <IoMdClose className="h-5" /> {/* ocultar trailer */}
             </div>
           </div>
           <div className="relative pt-[56.25%]">
