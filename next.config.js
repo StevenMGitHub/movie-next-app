@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "server",
-  adapter: netlify(),
   images: {
     domains: ["image.tmdb.org"], 
     /* configuramos los dominios para que se cargen en las url 
